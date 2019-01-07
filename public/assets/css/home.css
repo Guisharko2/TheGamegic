@@ -1,0 +1,39 @@
+body{
+    background-image: url("/assets/images/backgrounds/magic.jpg");
+    object-fit: cover;
+    background-attachment: fixed;}
+
+img{
+    max-height: 300px;
+    object-fit: contain;
+    top: 20vh;
+}
+
+.img{
+    max-height: 70vh !important;
+}
+
+form{
+    top: 20vh;
+}
+
+.form-inline .form-control{
+    background-color: #343a40;
+    width: 45vw;
+}
+a {
+    font-family: Rubik,"Helvetica Neue",Helvetica,Arial,sans-serif;    font-size: 1.7em;
+    color: #343a40;
+    font-weight: 900;
+}
+
+a:hover{
+    color: #343a40;
+}
+navbar{
+    background-color: rgba(24, 34, 24, 0.5);
+}
+.g-ico{
+    width: 40px;
+    height: 40px;
+}
