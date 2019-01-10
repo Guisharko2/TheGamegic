@@ -14,9 +14,8 @@
     {% endblock %}
 {% block body %}
     <div class="container mt-5 ">
-        {{ dump(app.request) }}
         <p>Il y a <strong>{{ total }}</strong> cartes contenant le votre recherche "{{ search }}"</p>
-        {% for card in cards %}
+        {% for card in cardsPages %}
             {% if card.image_uris.png is defined %}
             <a href="#" data-target="#card{{ card.id }}" data-toggle="modal" class="color-gray-darker td-hover-none">
                 <img class="ml-1 mb-1 mr-1 mt-1 .cardSmall" alt="{{ card.name }}" src="{{ card.image_uris.png }}">
@@ -45,5 +44,11 @@
             {% endif %}
 
         {% endfor %}
+        <div class="d-flex justify-content-center mt-5 nav-pagination ">
+                {{ knp_pagination_render(cardsPages) }}
+        </div>
+    <div class="d-flex justify-content-center mt-5 nav-pagination ">
+        <a href="{{ path('searchpage', {'search': search}) ~ '/' ~ (next+1)}}">Plus de résultats</a>
+    </div>
     </div>
 {% endblock %}
