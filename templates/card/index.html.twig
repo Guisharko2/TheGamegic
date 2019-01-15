@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Card index{% endblock %}
+
+{% block body %}
+    <h1>Card index</h1>
+
+<div class="container mt-5 ">
+
+        {% for card in cards %}
+                    <a href="{{ path('card_show', {'id': card.id}) }}"><img src="{{ card.image_uris.png }}"/></a>
+        {% else %}
+                <p>no records found</p>
+        {% endfor %}
+
+</div>
+{% endblock %}
