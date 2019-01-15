@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Card{% endblock %}
+
+{% block body %}
+    <h1>Votre Bibliothèque</h1>
+
+    <img src="{{ card.image_uris.png }}"/>
+
+
+    <a href="{{ path('card_index') }}">Retour à la Bibliothèque</a>
+
+
+    {{ include('card/_delete_form.html.twig') }}
+{% endblock %}

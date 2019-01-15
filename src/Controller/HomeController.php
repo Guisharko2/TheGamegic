@@ -15,36 +15,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use GuzzleHttp\Client;
+use App\Entity\Card;
 
 class HomeController extends AbstractController
 {
 
-    /**
-     * @Route("/not_found", name="not_found", methods={"GET"})
-     */
-    public function not(int $next=1): Response
-    {
-        $client = new Client([
-            RequestOptions::HTTP_ERRORS => false,
-        ]);
-
-        $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name&page=';
-        $search = '';
-        if ($_GET){
-            $search=$_GET['search'];
-        }
-        $nameCard = $client->request('GET', $this->uri . $search . $url . $next);
-        $statusCode = $nameCard->getStatusCode();
-        if ($statusCode > 400) {
-            return $this->redirectToRoute('not_found');
-        }
-        if(isset($_GET['search'])) {
-
-            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next, ]);
-        }
-
-        return $this->render('homepage/not_found.html.twig');
-    }
     /**
      * @Route("/", name="homepage", methods={"GET"})
      */
@@ -62,7 +37,10 @@ class HomeController extends AbstractController
         $nameCard = $client->request('GET', $this->uri . $search . $url . $next);
         $statusCode = $nameCard->getStatusCode();
         if ($statusCode > 400) {
-            return $this->redirectToRoute('not_found');
+            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
+
+            return $this->redirectToRoute('homepage');
+
         }
         if(isset($_GET['search'])) {
 
@@ -75,7 +53,7 @@ class HomeController extends AbstractController
     private $uri = 'https://api.scryfall.com/cards/search?q=';
 
     /**
-     * @Route("/searchpage/{search}/{next}", name="searchpage", methods={"GET"},requirements={"next"})
+     * @Route("/searchpage/{search}/{next}", name="searchpage", methods={"GET|POST"},requirements={"next"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function basicResearch(string $search, Request $request, PaginatorInterface $paginator, int $next=1): Response
@@ -89,7 +67,9 @@ class HomeController extends AbstractController
         $nameCard = $client->request('GET', $this->uri . $search . $url .$next);
         $statusCode = $nameCard->getStatusCode();
         if ($statusCode > 300) {
-                return $this->redirectToRoute('not_found');
+            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
+
+            return $this->redirectToRoute('homepage');
         }
         if(isset($_GET['search'])) {
 
@@ -106,7 +86,7 @@ class HomeController extends AbstractController
             20
         );
         $cardsPages->setPageRange(9);
-
+        dump($json);
         return $this->render('homepage/search.html.twig', [
             'cards' => $json['data'],
             'search' => $search,
@@ -133,7 +113,10 @@ class HomeController extends AbstractController
         $nameCard = $client->request('GET', $this->uri . $search . $url . $next);
         $statusCode = $nameCard->getStatusCode();
         if ($statusCode > 400) {
-            return $this->redirectToRoute('not_found');
+            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
+
+            return $this->redirectToRoute('homepage');
+
         }
         if(isset($_GET['search'])) {
 
