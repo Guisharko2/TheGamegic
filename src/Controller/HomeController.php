@@ -8,35 +8,41 @@
 
 namespace App\Controller;
 
+use GuzzleHttp\RequestOptions;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use GuzzleHttp\Client;
+use App\Entity\Card;
 
 class HomeController extends AbstractController
 {
 
     /**
-     * @Route("/not", name="not", methods={"GET"})
-     */
-    public function not(): Response
-    {
-        return $this->render('homepage/not_found.html.twig');
-    }
-    /**
      * @Route("/", name="homepage", methods={"GET"})
      */
-    public function index(int $page=1): Response
+    public function index(int $next = 1): Response
     {
-        $client = new Client();
-        $url = '&unique=card&sas=grid&order=name&page=';
+        $client = new Client([
+            RequestOptions::HTTP_ERRORS => false,
+        ]);
 
-        if(isset($_GET['search'])) {
-            $search = $_GET['search'];
-            $nameCard = $client->request('GET', $this->uri .$search. $url. $page);
+        $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name&page=';
+        $search = '';
+        if ($_GET) {
+            $search=$_GET['search'];
+        }
+        $nameCard = $client->request('GET', $this->uri . $search . $url . $next);
+        $statusCode = $nameCard->getStatusCode();
+        if ($statusCode > 400) {
+            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
 
-            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'page' => 1, ]);
+            return $this->redirectToRoute('homepage');
+        }
+        if (isset($_GET['search'])) {
+            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next, ]);
         }
 
         return $this->render('homepage/index.html.twig');
@@ -45,34 +51,76 @@ class HomeController extends AbstractController
     private $uri = 'https://api.scryfall.com/cards/search?q=';
 
     /**
-     * @Route("/searchpage/{search}/{page}", name="searchpage", methods={"GET"},requirements={"page"})
+     * @Route("/searchpage/{search}/{next}", name="searchpage", methods={"GET|POST"},requirements={"next"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function apiRequest(string $search, int $page=1): Response
-    {
+    public function basicResearch(
+        string $search,
+        Request $request,
+        PaginatorInterface $paginator,
+        int $next = 1
+    ): Response {
 
-        $client = new Client();
-        $url = '&unique=card&sas=grid&order=name&page=';
+        $client = new Client([
+            RequestOptions::HTTP_ERRORS => false,
+        ]);
 
-        $nameCard = $client->request('GET', $this->uri . $search . $url . $page);
+        $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name&page=';
+        $nameCard = $client->request('GET', $this->uri . $search . $url .$next);
         $statusCode = $nameCard->getStatusCode();
-        dump($statusCode);
         if ($statusCode > 300) {
-                return $this->redirectToRoute('not');
-        }
-        if(isset($_GET['search'])) {
+            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
 
-                return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'page' => 1, ]);
+            return $this->redirectToRoute('homepage');
+        }
+        if (isset($_GET['search'])) {
+                return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next]);
         }
         $body = $nameCard->getBody();
         $json = json_decode($body->getContents(), true);
-
-
+        $cardsPages = $json['data'];
+        $cardsPages = $paginator->paginate(
+            $cardsPages,
+            // Define the page parameter
+            $request->query->getInt('page', 1),
+            // Items per page
+            20
+        );
+        $cardsPages->setPageRange(9);
+        dump($json);
         return $this->render('homepage/search.html.twig', [
             'cards' => $json['data'],
             'search' => $search,
-            'total' => $json['total_cards']
-
+            'next' => $next,
+            'total' => $json['total_cards'],
+            'cardsPages' => $cardsPages,
         ]);
+    }
+
+    /**
+     * @Route("/advancedSearchpage/", name="advanced_search", methods={"GET"})
+     */
+    public function advancedResearch(int $next = 1): Response
+    {
+        $client = new Client([
+            RequestOptions::HTTP_ERRORS => false,
+        ]);
+
+        $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name&page=';
+        $search = '';
+        if ($_GET) {
+            $search=$_GET['search'];
+        }
+        $nameCard = $client->request('GET', $this->uri . $search . $url . $next);
+        $statusCode = $nameCard->getStatusCode();
+        if ($statusCode > 400) {
+            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
+
+            return $this->redirectToRoute('homepage');
+        }
+        if (isset($_GET['search'])) {
+            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next, ]);
+        }
+        return $this->render('homepage/advanced_search.html.twig');
     }
 }

@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}The Gamegic{% endblock %}
+{% block stylesheets %}
+    <link href="/assets/css/home.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=MedievalSharp"/>
+{% endblock %}
+    {% block navbar %}
+    {% endblock %}
+{% block body %}
+    <div class="container mt-5 ">
+        <form class="form-inline my-2 my-lg-0 justify-content-right">
+            <input class="form-control mr-sm-2 text-light navsearch" type="search" placeholder="Nom"
+                   aria-label="nom" name="nom">
+            <input class="form-control mr-sm-2 text-light navsearch" type="search" placeholder="Type"
+                   aria-label="nom" name="type">
+            <button class="btn btn-dark my-2 my-sm-0 text-light" type="submit">Rechercher</button>
+        </form>
+    </div>
+{% endblock %}
