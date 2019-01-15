@@ -23,7 +23,7 @@ class HomeController extends AbstractController
     /**
      * @Route("/", name="homepage", methods={"GET"})
      */
-    public function index(int $next=1): Response
+    public function index(int $next = 1): Response
     {
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
@@ -31,7 +31,7 @@ class HomeController extends AbstractController
 
         $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name&page=';
         $search = '';
-        if ($_GET){
+        if ($_GET) {
             $search=$_GET['search'];
         }
         $nameCard = $client->request('GET', $this->uri . $search . $url . $next);
@@ -40,10 +40,8 @@ class HomeController extends AbstractController
             $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
 
             return $this->redirectToRoute('homepage');
-
         }
-        if(isset($_GET['search'])) {
-
+        if (isset($_GET['search'])) {
             return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next, ]);
         }
 
@@ -56,8 +54,12 @@ class HomeController extends AbstractController
      * @Route("/searchpage/{search}/{next}", name="searchpage", methods={"GET|POST"},requirements={"next"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function basicResearch(string $search, Request $request, PaginatorInterface $paginator, int $next=1): Response
-    {
+    public function basicResearch(
+        string $search,
+        Request $request,
+        PaginatorInterface $paginator,
+        int $next = 1
+    ): Response {
 
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
@@ -71,8 +73,7 @@ class HomeController extends AbstractController
 
             return $this->redirectToRoute('homepage');
         }
-        if(isset($_GET['search'])) {
-
+        if (isset($_GET['search'])) {
                 return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next]);
         }
         $body = $nameCard->getBody();
@@ -99,7 +100,7 @@ class HomeController extends AbstractController
     /**
      * @Route("/advancedSearchpage/", name="advanced_search", methods={"GET"})
      */
-    public function advancedResearch(int $next=1): Response
+    public function advancedResearch(int $next = 1): Response
     {
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
@@ -107,7 +108,7 @@ class HomeController extends AbstractController
 
         $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name&page=';
         $search = '';
-        if ($_GET){
+        if ($_GET) {
             $search=$_GET['search'];
         }
         $nameCard = $client->request('GET', $this->uri . $search . $url . $next);
@@ -116,10 +117,8 @@ class HomeController extends AbstractController
             $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
 
             return $this->redirectToRoute('homepage');
-
         }
-        if(isset($_GET['search'])) {
-
+        if (isset($_GET['search'])) {
             return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next, ]);
         }
         return $this->render('homepage/advanced_search.html.twig');
