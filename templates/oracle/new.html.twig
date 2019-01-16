@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Oracle{% endblock %}
+
+{% block body %}
+    <h1>Create new Oracle</h1>
+
+    {{ include('oracle/_form.html.twig') }}
+
+    <a href="{{ path('oracle_index') }}">back to list</a>
+{% endblock %}
