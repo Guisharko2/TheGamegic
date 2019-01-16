@@ -1,13 +1,30 @@
 {% extends 'base.html.twig' %}
-
+        {% block stylesheets %}
+            <link href="/assets/css/symbols.css" rel="stylesheet">
+            <link href="/assets/css/show.css" rel="stylesheet">{% endblock %}
 {% block title %}Card{% endblock %}
-
+    {% block home %}
+        <a class="nav-item nav-link" href="{{ path('homepage') }}">Recherche</a>
+    {% endblock %}
 {% block body %}
-    <h1>Votre Bibliothèque</h1>
+    <h1 class="text-center">Ma Bibliothèque</h1>
+    <h2 class="text-center">
+        {% if card.printed_name is defined %}
+            {{ card.printed_name }}
+        {% else %}
+            {{ card.name }}
+        {% endif %}
+        {% for mana in manas %}
+            <p class="card-symbol card-symbol-{{ mana|replace({'{': '', '}': ''}) }}">{{ mana }}</p>
+        {% endfor %}
+    </h2>
+    <div class="row">
+        <div class="col-6">
 
-    <img src="{{ card.image_uris.png }}"/>
+        </div>
+        <img class="col-6" src="{{ card.image_uris.png }}"/>
 
-
+    </div>
     <a href="{{ path('card_index') }}">Retour à la Bibliothèque</a>
 
 
