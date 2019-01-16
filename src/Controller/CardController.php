@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Client;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @Route("/card")
@@ -23,7 +24,7 @@ class CardController extends AbstractController
      * @Route("/", name="card_index", methods={"GET"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function index(CardRepository $cardRepository): Response
+    public function index(CardRepository $cardRepository, PaginatorInterface $paginator, Request $request): Response
     {
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
@@ -33,12 +34,12 @@ class CardController extends AbstractController
         foreach ($cards as $card) {
             $nameCard = $client->request('GET', $this->uri . $card->getCardId());
             $statusCode = $nameCard->getStatusCode();
-            if ($statusCode > 300) {
-                return $this->redirectToRoute('homepage');
-            }
+
             $body = $nameCard->getBody();
             $json[] = json_decode($body->getContents(), true);
+
         }
+
         return $this->render('card/index.html.twig', ['cards' => $json]);
     }
 
@@ -57,13 +58,15 @@ class CardController extends AbstractController
 
         $nameCard = $client->request('GET', $this->uri . $card->getCardId());
         $statusCode = $nameCard->getStatusCode();
-        if ($statusCode > 300) {
+        if ($statusCode > 400) {
+            $this->addFlash('danger', "Aucun résultat ne correspond");
+
             return $this->redirectToRoute('homepage');
         }
         $body = $nameCard->getBody();
         $json = json_decode($body->getContents(), true);
-
-        return $this->render('card/show.html.twig', ['card' =>$json]);
+        $manas = str_split($json['mana_cost'],3);
+        return $this->render('card/show.html.twig', ['card' =>$json, 'manas' =>$manas]);
     }
 
 
@@ -84,14 +87,19 @@ class CardController extends AbstractController
     /**
      * @Route("/{idCard}/add/{search}/{next}", name="add_card", methods="GET")
      */
-    public function addCard(string $idCard, string $search, int $next): Response
+    public function addCard(string $idCard, string $search, int $next, CardRepository $cardRepository): Response
     {
-        $card = new Card();
+        if (!$cardRepository->findBy(['cardId'=>$idCard])){
+            $card = new Card();
+            $card->setCardId($idCard);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($card);
+            $entityManager->flush();
+        }else{
+            $this->addFlash('warning', "Vous avez déjà ajouté cette carte à votre bibliothèque !");
 
-        $card->setCardId($idCard);
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($card);
-        $entityManager->flush();
+        }
+
 
         return $this->redirectToRoute('searchpage', ['search' => $search, 'next' => $next, ]);
     }

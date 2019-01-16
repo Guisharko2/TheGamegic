@@ -19,6 +19,12 @@ use App\Entity\Card;
 
 class HomeController extends AbstractController
 {
+    private $uri = 'https://api.scryfall.com/cards/search?q=';
+    private $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name';
+    private $urlPage = '&page=';
+    private $advanceSearch = 'grid&order=name&q=';
+    private $language ='&include_multilingual=true';
+
 
     /**
      * @Route("/", name="homepage", methods={"GET"})
@@ -28,27 +34,23 @@ class HomeController extends AbstractController
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
         ]);
-
-        $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name&page=';
-        $search = '';
         if ($_GET) {
-            $search=$_GET['search'];
+            $search = $_GET['search'];
+        } else {
+            $search = '';
         }
-        $nameCard = $client->request('GET', $this->uri . $search . $url . $next);
+        $nameCard = $client->request('GET', $this->uri . $search . $this->url . $this->urlPage . $next);
         $statusCode = $nameCard->getStatusCode();
         if ($statusCode > 400) {
             $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
-
             return $this->redirectToRoute('homepage');
         }
-        if (isset($_GET['search'])) {
-            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next, ]);
+        if (!empty(trim($search))) {
+            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next,]);
         }
 
         return $this->render('homepage/index.html.twig');
     }
-
-    private $uri = 'https://api.scryfall.com/cards/search?q=';
 
     /**
      * @Route("/searchpage/{search}/{next}", name="searchpage", methods={"GET|POST"},requirements={"next"})
@@ -59,22 +61,23 @@ class HomeController extends AbstractController
         Request $request,
         PaginatorInterface $paginator,
         int $next = 1
-    ): Response {
+    ): Response
+    {
 
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
         ]);
 
-        $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name&page=';
-        $nameCard = $client->request('GET', $this->uri . $search . $url .$next);
+        $nameCard = $client->request('GET', $this->uri . $search . $this->url . $this->urlPage . $next);
         $statusCode = $nameCard->getStatusCode();
+
+        if (isset($_GET['search'])) {
+            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next]);
+        }
         if ($statusCode > 300) {
             $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
 
             return $this->redirectToRoute('homepage');
-        }
-        if (isset($_GET['search'])) {
-                return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next]);
         }
         $body = $nameCard->getBody();
         $json = json_decode($body->getContents(), true);
@@ -87,7 +90,6 @@ class HomeController extends AbstractController
             20
         );
         $cardsPages->setPageRange(9);
-        dump($json);
         return $this->render('homepage/search.html.twig', [
             'cards' => $json['data'],
             'search' => $search,
@@ -98,29 +100,37 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/advancedSearchpage/", name="advanced_search", methods={"GET"})
+     * @Route("/advancedsearchpage/", name="advanced_search", methods={"GET"})
      */
     public function advancedResearch(int $next = 1): Response
     {
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
         ]);
-
-        $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name&page=';
         $search = '';
-        if ($_GET) {
-            $search=$_GET['search'];
-        }
-        $nameCard = $client->request('GET', $this->uri . $search . $url . $next);
-        $statusCode = $nameCard->getStatusCode();
-        if ($statusCode > 400) {
-            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
 
-            return $this->redirectToRoute('homepage');
+        dump($_GET);
+        if ($_GET) {
+            if ($_GET['name']) {
+                $search = $_GET['name'];
+            }
+            if ($_GET['oracle']) {
+                $search .= '+oracle%3A'.$_GET['oracle'];
+            }
         }
-        if (isset($_GET['search'])) {
-            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next, ]);
-        }
+        $nameCard = $client->request(
+            'GET', $this->uri . $this->advanceSearch . $search . $this->urlPage . $next . $this->language);
+        $statusCode = $nameCard->getStatusCode();
+            if ($statusCode > 400) {
+                $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
+                dump($search);
+
+                return $this->redirectToRoute('advanced_search');
+            }
+            if (!empty($search)) {
+                return $this->redirectToRoute('searchpage', ['search' => $search, 'next' => $next,]);
+            }
         return $this->render('homepage/advanced_search.html.twig');
+
     }
 }
