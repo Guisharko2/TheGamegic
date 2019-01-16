@@ -23,7 +23,7 @@ class HomeController extends AbstractController
     private $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name';
     private $urlPage = '&page=';
     private $advanceSearch = 'grid&order=name&q=';
-    private $language ='&include_multilingual=true';
+    private $language = '&include_multilingual=true';
 
 
     /**
@@ -61,8 +61,7 @@ class HomeController extends AbstractController
         Request $request,
         PaginatorInterface $paginator,
         int $next = 1
-    ): Response
-    {
+    ): Response {
 
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
@@ -115,22 +114,28 @@ class HomeController extends AbstractController
                 $search = $_GET['name'];
             }
             if ($_GET['oracle']) {
-                $search .= '+oracle%3A'.$_GET['oracle'];
+                $search .= '+oracle%3A' . $_GET['oracle'];
             }
         }
         $nameCard = $client->request(
-            'GET', $this->uri . $this->advanceSearch . $search . $this->urlPage . $next . $this->language);
+            'GET',
+            $this->uri .
+            $this->advanceSearch .
+            $search .
+            $this->urlPage .
+            $next .
+            $this->language
+        );
         $statusCode = $nameCard->getStatusCode();
-            if ($statusCode > 400) {
-                $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
-                dump($search);
+        if ($statusCode > 400) {
+            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
+            dump($search);
 
-                return $this->redirectToRoute('advanced_search');
-            }
-            if (!empty($search)) {
-                return $this->redirectToRoute('searchpage', ['search' => $search, 'next' => $next,]);
-            }
+            return $this->redirectToRoute('advanced_search');
+        }
+        if (!empty($search)) {
+            return $this->redirectToRoute('searchpage', ['search' => $search, 'next' => $next,]);
+        }
         return $this->render('homepage/advanced_search.html.twig');
-
     }
 }

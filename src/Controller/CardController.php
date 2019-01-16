@@ -37,7 +37,6 @@ class CardController extends AbstractController
 
             $body = $nameCard->getBody();
             $json[] = json_decode($body->getContents(), true);
-
         }
 
         return $this->render('card/index.html.twig', ['cards' => $json]);
@@ -65,7 +64,7 @@ class CardController extends AbstractController
         }
         $body = $nameCard->getBody();
         $json = json_decode($body->getContents(), true);
-        $manas = str_split($json['mana_cost'],3);
+        $manas = str_split($json['mana_cost'], 3);
         return $this->render('card/show.html.twig', ['card' =>$json, 'manas' =>$manas]);
     }
 
@@ -89,15 +88,14 @@ class CardController extends AbstractController
      */
     public function addCard(string $idCard, string $search, int $next, CardRepository $cardRepository): Response
     {
-        if (!$cardRepository->findBy(['cardId'=>$idCard])){
+        if (!$cardRepository->findBy(['cardId'=>$idCard])) {
             $card = new Card();
             $card->setCardId($idCard);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($card);
             $entityManager->flush();
-        }else{
-            $this->addFlash('warning', "Vous avez déjà ajouté cette carte à votre bibliothèque !");
-
+        } else {
+            $this->addFlash('warning', "Vous avez déjà ajouté cette carte à votre bibliothèque !") ;
         }
 
 
