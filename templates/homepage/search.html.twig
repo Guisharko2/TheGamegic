@@ -5,14 +5,9 @@
     <link href="/assets/css/home.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=MedievalSharp"/>
 {% endblock %}
-    {% block navbar %}
-        <form class="form-inline my-2 my-lg-0 justify-content-right">
-            <input class="form-control mr-sm-2 text-light navsearch" type="search" placeholder="Rechercher"
-                   aria-label="Search" name="search">
-            <button class="btn btn-dark my-2 my-sm-0 text-light" type="submit">Rechercher</button>
-        </form>
-    {% endblock %}
+{% block search %}{{ include('_searchnav.html.twig') }}{% endblock %}
 {% block body %}
+
     <div class="container mt-5 ">
         <p>Il y a <strong>{{ total }}</strong> cartes contenant le votre recherche "{{ search }}"</p>
         {% for card in cardsPages %}
