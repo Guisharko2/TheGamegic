@@ -9,7 +9,6 @@
 {% block body %}
 
     <div class="container mt-5 ">
-        {{ dump(app.user) }}
         <p>Il y a <strong>{{ total }}</strong> cartes contenant le votre recherche "{{ search }}"</p>
         {% for card in cardsPages %}
             {% if card.image_uris.png is defined %}
