@@ -3,14 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\Card;
+use App\Entity\User;
 use App\Repository\CardRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Client;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/card")
@@ -29,7 +33,7 @@ class CardController extends AbstractController
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
         ]);
-        $cards =  $cardRepository->findAll();
+        $cards = $cardRepository->findAll();
 
         foreach ($cards as $card) {
             $nameCard = $client->request('GET', $this->uri . $card->getCardId());
@@ -49,7 +53,7 @@ class CardController extends AbstractController
      */
     public function show(string $id): Response
     {
-        $card= new Card();
+        $card = new Card();
         $card->setCardId($id);
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
@@ -65,7 +69,7 @@ class CardController extends AbstractController
         $body = $nameCard->getBody();
         $json = json_decode($body->getContents(), true);
         $manas = str_split($json['mana_cost'], 3);
-        return $this->render('card/show.html.twig', ['card' =>$json, 'manas' =>$manas]);
+        return $this->render('card/show.html.twig', ['card' => $json, 'manas' => $manas]);
     }
 
 
@@ -74,7 +78,7 @@ class CardController extends AbstractController
      */
     public function delete(Request $request, Card $card): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$card->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $card->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($card);
             $entityManager->flush();
@@ -88,17 +92,22 @@ class CardController extends AbstractController
      */
     public function addCard(string $idCard, string $search, int $next, CardRepository $cardRepository): Response
     {
-        if (!$cardRepository->findBy(['cardId'=>$idCard])) {
+        if (!$cardRepository->findBy(['cardId' => $idCard])) {
             $card = new Card();
+            $card->addUser($this->getUser());
             $card->setCardId($idCard);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($card);
             $entityManager->flush();
-        } else {
-            $this->addFlash('warning', "Vous avez déjà ajouté cette carte à votre bibliothèque !") ;
+        } elseif ($cardRepository->findBy(['cardId' => $idCard])) {
+            $card = $cardRepository->findOneBy(['cardId' => $idCard]);
+            $card->addUser($this->getUser());
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($card);
+            $entityManager->flush();
         }
 
 
-        return $this->redirectToRoute('searchpage', ['search' => $search, 'next' => $next, ]);
+        return $this->redirectToRoute('searchpage', ['search' => $search, 'next' => $next,]);
     }
 }
