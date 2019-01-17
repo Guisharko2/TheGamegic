@@ -94,14 +94,10 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         if (in_array((new Role('ROLE_ADMIN')), $token->getRoles())) {
-            return new RedirectResponse($this->router->generate('admin_index'));
-        } elseif ($token->getUser()->getActivate() === false) {
-            $this->session->getFlashBag()->add('danger', 'Votre compte a été désactivé');
-
-            return new RedirectResponse($this->router->generate('app_login'));
+            return new RedirectResponse($this->router->generate('easyadmin'));
         }
 
-        return new RedirectResponse($this->router->generate('profile_index'));
+        return new RedirectResponse($this->router->generate('homepage'));
     }
 
     protected function getLoginUrl()
