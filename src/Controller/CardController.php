@@ -33,8 +33,7 @@ class CardController extends AbstractController
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
         ]);
-        $cards = $cardRepository->findAll();
-
+        $cards = $cardRepository->findCardsByUser($this->getUser());
         foreach ($cards as $card) {
             $nameCard = $client->request('GET', $this->uri . $card->getCardId());
             $statusCode = $nameCard->getStatusCode();
@@ -42,8 +41,11 @@ class CardController extends AbstractController
             $body = $nameCard->getBody();
             $json[] = json_decode($body->getContents(), true);
         }
+        $cardsPages = $json;
 
-        return $this->render('card/index.html.twig', ['cards' => $json]);
+        return $this->render('card/index.html.twig', [
+            'cards' => $json,
+        ]);
     }
 
 
