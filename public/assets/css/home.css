@@ -40,3 +40,6 @@ navbar{
 .nav-pagination,a{
     color: white;
 }
+.modal-content{
+    background-color: transparent;
+}
