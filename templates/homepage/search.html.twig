@@ -23,12 +23,12 @@
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                                 <button class="btn btn-outline-link btn-rounded btn-md ml-4 text-right"
-                                        data-dismiss="modal" type="button"><i class="far fa-times-circle fa-2x text-info"></i>
+                                        data-dismiss="modal" type="button"><i class="far fa-times-circle fa-2x text-secondary"></i>
                                 </button>
                                 <img class="img" src="{{ card.image_uris.png }}" alt="{{ card.name }}">
                                 {% if app.user.roles is defined %}
                                     <a href="{{ path('add_card', {'idCard':card.id, 'search':search, 'next':next}) }}">
-                                        <i class="fas fa-plus-circle fa-2x text-info"></i>
+                                        <i class="fas fa-plus-circle fa-2x text-warning"></i>
                                     </a>
                                 {% endif %}
 

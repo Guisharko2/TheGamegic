@@ -34,15 +34,18 @@ class CardController extends AbstractController
             RequestOptions::HTTP_ERRORS => false,
         ]);
         $cards = $cardRepository->findCardsByUser($this->getUser());
-        foreach ($cards as $card) {
-            $nameCard = $client->request('GET', $this->uri . $card->getCardId());
-            $statusCode = $nameCard->getStatusCode();
+        if (count($cards) !== 0) {
+            foreach ($cards as $card) {
+                $nameCard = $client->request('GET', $this->uri . $card->getCardId());
+                $statusCode = $nameCard->getStatusCode();
 
-            $body = $nameCard->getBody();
-            $json[] = json_decode($body->getContents(), true);
+                $body = $nameCard->getBody();
+                $json[] = json_decode($body->getContents(), true);
+            }
+        } else {
+            $this->addFlash('warning', "Votre bibliothèque est vide");
+            return $this->redirectToRoute('homepage');
         }
-        $cardsPages = $json;
-
         return $this->render('card/index.html.twig', [
             'cards' => $json,
         ]);
