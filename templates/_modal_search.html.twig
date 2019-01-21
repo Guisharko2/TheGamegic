@@ -1,0 +1,30 @@
+<div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade" id="card{{ card.id }}"
+     role="dialog"
+     tabindex="-1">
+    <div class="modal-dialog modal-lg ml-5" role="document">
+        <div class="modal-content">
+            <div class="row">
+                <button class="btn btn-outline-link btn-rounded btn-md ml-4 text-right col-11"
+                        data-dismiss="modal" type="button"><i
+                            class="far fa-times-circle fa-2x text-secondary"></i>
+                </button>
+                <div class="offset-6"></div>
+                <div class="col-6 justify-content-center">
+                    {% if (app.user.roles is defined) %}
+                        {% if ( "/searchpage/" in app.request.getPathInfo ) %}
+                            {% include('_addTo.html.twig') %}
+                        {% else %}
+                            {% include('_addTo_deck.html.twig') %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="offset-8"></div>
+                <div class="col-4 justify-content-right">
+                    <img class="img" src="{{ card.image_uris.png }}" alt="{{ card.name }}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
