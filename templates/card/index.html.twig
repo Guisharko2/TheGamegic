@@ -9,7 +9,13 @@
     <h2 class="col-12 text-right">{{ cards|length }} cartes</h2>
     </div>
         {% for card in cards %}
-                    <a href="{{ path('card_show', {'id': card.id}) }}"><img src="{{ card.image_uris.png }}"/></a>
+                    {#<a href="{{ path('card_show', {'id': card.id}) }}"><img src="{{ card.image_uris.png }}"/></a>#}
+            <a href="#" data-target="#card{{ card.id }}" data-toggle="modal"
+               class="color-gray-darker td-hover-none">
+                <img class="ml-1 mb-1 mr-1 mt-1 .cardSmall" alt="{{ card.name }}" src="{{ card.image_uris.png }}">
+            </a>
+            {% include('_modal_search.html.twig') %}
+
         {% else %}
                 <p>Aucune carte à afficher</p>
         {% endfor %}

@@ -1,0 +1,19 @@
+{% if decks is defined %}
+<div class="dropdown mt-3 ml-3">
+    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-plus-circle fa-2x"></i>
+    </a>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown mt-3 ml-3">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                   data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-boxes"></i> Mes Decks
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                </div>
+            </div>
+    </div>
+</div>
+{% endif %}
