@@ -1,0 +1,23 @@
+<div class="dropdown mt-3 ml-3">
+    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-plus-circle fa-2x"></i>
+    </a>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+        <a class="dropdown-item dropmenu"
+           href="{{ path('add_card', {'idCard':card.id, 'search':search, 'next':next}) }}">
+            <i class="fas fa-book"></i> Ma Bibliothèque
+        </a>
+        {% if decks is defined %}
+        <div class="dropdown mt-3 ml-3">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+               data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-boxes"></i> Mes Decks
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>

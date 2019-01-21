@@ -5,10 +5,9 @@
     <link href="/assets/css/home.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=MedievalSharp"/>
 {% endblock %}
-{% block search %}{{ include('_searchnav.html.twig') }}{% endblock %}
 {% block body %}
 
-    <div class="container mt-5 ">
+    <div class="container mt-5 pl-5">
         <p>Il y a <strong>{{ total }}</strong> cartes contenant le votre recherche "{{ search }}"</p>
         {% for card in cardsPages %}
             {% if card.image_uris.png is defined %}
@@ -20,18 +19,26 @@
                 <div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade" id="card{{ card.id }}"
                      role="dialog"
                      tabindex="-1">
-                    <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-dialog modal-lg ml-5" role="document">
                         <div class="modal-content">
-                                <button class="btn btn-outline-link btn-rounded btn-md ml-4 text-right"
-                                        data-dismiss="modal" type="button"><i class="far fa-times-circle fa-2x text-secondary"></i>
+                            <div class="row">
+                                <button class="btn btn-outline-link btn-rounded btn-md ml-4 text-right col-11"
+                                        data-dismiss="modal" type="button"><i
+                                            class="far fa-times-circle fa-2x text-secondary"></i>
                                 </button>
-                                <img class="img" src="{{ card.image_uris.png }}" alt="{{ card.name }}">
-                                {% if app.user.roles is defined %}
-                                    <a href="{{ path('add_card', {'idCard':card.id, 'search':search, 'next':next}) }}">
-                                        <i class="fas fa-plus-circle fa-2x text-warning"></i>
-                                    </a>
-                                {% endif %}
-
+                                <div class="offset-6"></div>
+                                <div class="col-6 justify-content-center">
+                                    {% if app.user.roles is defined %}
+                                        {% include('_addTo.html.twig') %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="offset-8"></div>
+                                <div class="col-4 justify-content-right">
+                                    <img class="img" src="{{ card.image_uris.png }}" alt="{{ card.name }}">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

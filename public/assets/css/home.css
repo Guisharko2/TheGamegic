@@ -1,7 +1,9 @@
 body{
     background-image: url("/assets/images/backgrounds/magic.jpg");
     object-fit: cover;
-    background-attachment: fixed;}
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
 
 img{
     max-height: 300px;
@@ -13,14 +15,16 @@ img{
     max-height: 70vh !important;
 }
 
-form{
+.index-page form{
     top: 25vh;
 }
 
 .form-inline .form-control{
     background-color: #6c757d;
+    opacity: 0.8;
     width: 30vw;
 }
+
 a {
     font-family: Rubik,"Helvetica Neue",Helvetica,Arial,sans-serif;    font-size: 1.7em;
     color: #343a40;
@@ -30,7 +34,7 @@ a {
 a:hover{
     color: #343a40;
 }
-navbar{
+.navbar{
     background-color: rgba(24, 34, 24, 0.5);
 }
 .g-ico{
@@ -42,6 +46,7 @@ navbar{
 }
 .modal-content{
     background-color: transparent;
+    width: 90vw;
 }
 .dropdown-menu{
     background-color: #6c757d;

@@ -21,14 +21,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class CardController extends AbstractController
 {
-
-    private $uri = 'https://api.scryfall.com/cards/';
+    private $uri = 'https://api.scryfall.com/cards/search?q=';
+    private $url = '&unique=card&include_multilingual=true&format=image&sas=grid&order=name';
+    private $urlPage = '&page=';
+    private $urc = 'https://api.scryfall.com/cards/';
 
     /**
      * @Route("/", name="card_index", methods={"GET"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function index(CardRepository $cardRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(CardRepository $cardRepository, PaginatorInterface $paginator, Request $request, int $next=1): Response
     {
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
@@ -36,7 +38,7 @@ class CardController extends AbstractController
         $cards = $cardRepository->findCardsByUser($this->getUser());
         if (count($cards) !== 0) {
             foreach ($cards as $card) {
-                $nameCard = $client->request('GET', $this->uri . $card->getCardId());
+                $nameCard = $client->request('GET', $this->urc . $card->getCardId());
                 $statusCode = $nameCard->getStatusCode();
 
                 $body = $nameCard->getBody();
@@ -45,6 +47,19 @@ class CardController extends AbstractController
         } else {
             $this->addFlash('warning', "Votre bibliothèque est vide");
             return $this->redirectToRoute('homepage');
+        }
+        if ($_GET) {
+            $search = $_GET['search'];
+
+        $nameCard = $client->request('GET', $this->uri . $search . $this->url . $this->urlPage . $next);
+        $statusCode = $nameCard->getStatusCode();
+        if ($statusCode > 400) {
+            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
+            return $this->redirectToRoute('card_index');
+        }
+        if (!empty(trim($search))) {
+            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next,]);
+        }
         }
         return $this->render('card/index.html.twig', [
             'cards' => $json,
@@ -56,7 +71,7 @@ class CardController extends AbstractController
      * @Route("/{id}", name="card_show", methods={"GET"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function show(string $id): Response
+    public function show(string $id, int $next=1): Response
     {
         $card = new Card();
         $card->setCardId($id);
@@ -64,12 +79,25 @@ class CardController extends AbstractController
             RequestOptions::HTTP_ERRORS => false,
         ]);
 
-        $nameCard = $client->request('GET', $this->uri . $card->getCardId());
+        $nameCard = $client->request('GET', $this->urc . $card->getCardId());
         $statusCode = $nameCard->getStatusCode();
         if ($statusCode > 400) {
             $this->addFlash('danger', "Aucun résultat ne correspond");
 
             return $this->redirectToRoute('homepage');
+        }
+        if ($_GET) {
+            $search = $_GET['search'];
+
+            $nameCard = $client->request('GET', $this->uri . $search . $this->url . $this->urlPage . $next);
+            $statusCode = $nameCard->getStatusCode();
+            if ($statusCode > 400) {
+                $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
+                return $this->redirectToRoute('card_index');
+            }
+            if (!empty(trim($search))) {
+                return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next,]);
+            }
         }
         $body = $nameCard->getBody();
         $json = json_decode($body->getContents(), true);
