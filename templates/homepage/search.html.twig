@@ -26,17 +26,15 @@
                                         data-dismiss="modal" type="button"><i
                                             class="far fa-times-circle fa-2x text-secondary"></i>
                                 </button>
+                                <div class="offset-6"></div>
+                                <div class="col-6 justify-content-center">
+                                    {% if app.user.roles is defined %}
+                                        {% include('_addTo.html.twig') %}
+                                    {% endif %}
+                                </div>
                             </div>
                             <div class="row">
-                                <div class="col-8">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            {% if app.user.roles is defined %}
-                                                {% include('_addTo.html.twig') %}
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="offset-8"></div>
                                 <div class="col-4 justify-content-right">
                                     <img class="img" src="{{ card.image_uris.png }}" alt="{{ card.name }}">
                                 </div>
