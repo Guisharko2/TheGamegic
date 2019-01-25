@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Deck{% endblock %}
+
+{% block body %}
+    <h1>Deck</h1>
+
+
+                <h2>{{ deck.name }}</h2>
+            {% for card in cards %}
+                <a href="#" data-target="#card{{ card.id }}" data-toggle="modal"
+                   class="color-gray-darker td-hover-none">
+                    <img class="ml-1 mb-1 mr-1 mt-1 .cardSmall" alt="{{ card.name }}" src="{{ card.image_uris.png }}">
+                </a>
+            {% endfor %}
+
+    <a href="{{ path('deck_edit', {'id': deck.id}) }}">edit</a>
+
+    {{ include('deck/_delete_form.html.twig') }}
+{% endblock %}

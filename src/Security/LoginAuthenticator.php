@@ -94,7 +94,7 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         if (in_array((new Role('ROLE_ADMIN')), $token->getRoles())) {
-            return new RedirectResponse($this->router->generate('easyadmin'));
+            return new RedirectResponse($this->router->generate('homepage'));
         }
 
         return new RedirectResponse($this->router->generate('homepage'));

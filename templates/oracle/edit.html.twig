@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Oracle{% endblock %}
+
+{% block body %}
+    <h1>Edit Oracle</h1>
+
+    {{ include('oracle/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('oracle_index') }}">back to list</a>
+
+    {{ include('oracle/_delete_form.html.twig') }}
+{% endblock %}

@@ -11,15 +11,42 @@
         <p>Il y a <strong>{{ total }}</strong> cartes contenant le votre recherche "{{ search }}"</p>
         {% for card in cardsPages %}
             {% if card.image_uris.png is defined %}
-
-                <a href="#" data-target="#card{{ card.id }}" data-toggle="modal"
-                   class="color-gray-darker td-hover-none">
-                    <img class="ml-1 mb-1 mr-1 mt-1 .cardSmall" alt="{{ card.name }}" src="{{ card.image_uris.png }}">
-                </a>
+                <div class="show-image">
+                    <a href="#" data-target="#card{{ card.id }}" data-toggle="modal"
+                       class="color-gray-darker td-hover-none">
+                        <img class="ml-1 mb-1 mr-1 mt-1 .cardSmall" alt="{{ card.name }}"
+                             src="{{ card.image_uris.png }}">
+                        {% if (app.user.roles is defined) %}
+                            <a href="{{ path('add_card', {'idCard':card.id, 'search':search, 'next':next}) }}">
+                                <button class="library mbutton btn btn-bloc btn-success ">
+                                    <i class="fa fa-plus-circle"></i> Bibliothèque
+                                </button>
+                            </a>
+                            <div class="dropdown mt-3 ml-3">
+                                <a class="decks mbutton btn btn-secondary dropdown-toggle" href="#" role="button"
+                                   id="dropdownMenuLink"
+                                   data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-plus-circle"></i> Decks
+                                </a>
+                                <div class="dropdown-menu mbutton" aria-labelledby="dropdownMenuLink">
+                                    {% for deck in decks %}
+                                        <a class="dropdown-item dropmenu" href="{{ path('add_to_deck', {'idCard':card.id, 'search':search, 'next':next, 'idDeck':deck.id}) }}">{{ deck.name }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <a href="#" data-target="#card{{ card.id }}" data-toggle="modal">
+                                <button class="show mbutton btn btn-bloc btn-danger">Voir
+                                    <i class="fa fa-plus-circle"></i></button>
+                            </a>
+                        {% endif %}
+                    </a>
+                </div>
                 {% include('_modal_search.html.twig') %}
             {% endif %}
 
         {% endfor %}
+
         <div class="d-flex justify-content-center mt-5 nav-pagination ">
             {{ knp_pagination_render(cardsPages) }}
         </div>
@@ -30,3 +57,4 @@
         {% endif %}
     </div>
 {% endblock %}
+

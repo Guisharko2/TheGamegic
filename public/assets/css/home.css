@@ -46,7 +46,7 @@ a:hover{
 }
 .modal-content{
     background-color: transparent;
-    width: 90vw;
+    border: none;
 }
 .dropdown-menu{
     background-color: #6c757d;
@@ -64,4 +64,45 @@ a:hover{
 .dropdown-item:focus, .dropdown-item:hover{
     background-color: #545b62;
     color: white;
+}
+div.show-image {
+    position: relative;
+    float:left;
+    margin:5px;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;
+}
+div.show-image:hover img{
+    opacity:0.6;
+    -webkit-transform: scale(1.2);
+    transform: scale(1.2);
+}
+div.show-image:hover button {
+    display: block;
+}
+div.show-image button {
+    position:absolute;
+    display:none;
+}
+div.show-image:hover a.decks{
+    display: block;
+}
+div.show-image button.library {
+    top:20%;
+    left:20%;
+}
+div.show-image a.decks {
+    position:absolute;
+    display:none;
+    margin-top: -80%;
+    left:20%;
+}
+div.show-image button.show {
+    top:80%;
+    left:32%;
+}
+.mbutton{
+    font-size: 16px;
 }

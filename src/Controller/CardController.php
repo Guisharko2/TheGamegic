@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Card;
 use App\Entity\User;
 use App\Repository\CardRepository;
+use App\Repository\DeckRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,8 +31,12 @@ class CardController extends AbstractController
      * @Route("/", name="card_index", methods={"GET"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function index(CardRepository $cardRepository, PaginatorInterface $paginator, Request $request, int $next=1): Response
-    {
+    public function index(
+        CardRepository $cardRepository,
+        PaginatorInterface $paginator,
+        Request $request,
+        int $next = 1
+    ): Response {
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
         ]);
@@ -51,15 +56,15 @@ class CardController extends AbstractController
         if ($_GET) {
             $search = $_GET['search'];
 
-        $nameCard = $client->request('GET', $this->uri . $search . $this->url . $this->urlPage . $next);
-        $statusCode = $nameCard->getStatusCode();
-        if ($statusCode > 400) {
-            $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
-            return $this->redirectToRoute('card_index');
-        }
-        if (!empty(trim($search))) {
-            return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next,]);
-        }
+            $nameCard = $client->request('GET', $this->uri . $search . $this->url . $this->urlPage . $next);
+            $statusCode = $nameCard->getStatusCode();
+            if ($statusCode > 400) {
+                $this->addFlash('danger', "Aucune carte ne correspond à votre recherche");
+                return $this->redirectToRoute('card_index');
+            }
+            if (!empty(trim($search))) {
+                return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next,]);
+            }
         }
         return $this->render('card/index.html.twig', [
             'cards' => $json,
@@ -71,7 +76,7 @@ class CardController extends AbstractController
      * @Route("/{id}", name="card_show", methods={"GET"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function show(string $id, int $next=1): Response
+    public function show(string $id, int $next = 1): Response
     {
         $card = new Card();
         $card->setCardId($id);

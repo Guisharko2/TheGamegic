@@ -65,7 +65,6 @@ class HomeController extends AbstractController
         PaginatorInterface $paginator,
         int $next = 1
     ): Response {
-
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
         ]);
@@ -91,6 +90,10 @@ class HomeController extends AbstractController
             // Items per page
             20
         );
+        $decks = '';
+        if ($this->getUser() !== null) {
+            $decks = $this->getUser()->getDecks();
+        }
         $cardsPages->setPageRange(9);
         return $this->render('homepage/search.html.twig', [
             'cards' => $json['data'],
@@ -98,6 +101,7 @@ class HomeController extends AbstractController
             'next' => $next,
             'total' => $json['total_cards'],
             'cardsPages' => $cardsPages,
+            'decks' => $decks,
         ]);
     }
 
