@@ -40,9 +40,15 @@ class User implements UserInterface
      */
     private $cards;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Deck", mappedBy="user")
+     */
+    private $decks;
+
     public function __construct()
     {
         $this->cards = new ArrayCollection();
+        $this->decks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,6 +152,34 @@ class User implements UserInterface
         if ($this->cards->contains($card)) {
             $this->cards->removeElement($card);
             $card->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Deck[]
+     */
+    public function getDecks(): Collection
+    {
+        return $this->decks;
+    }
+
+    public function addDeck(Deck $deck): self
+    {
+        if (!$this->decks->contains($deck)) {
+            $this->decks[] = $deck;
+            $deck->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDeck(Deck $deck): self
+    {
+        if ($this->decks->contains($deck)) {
+            $this->decks->removeElement($deck);
+            $deck->removeUser($this);
         }
 
         return $this;
