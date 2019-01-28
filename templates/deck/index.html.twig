@@ -3,22 +3,29 @@
 {% block title %}Deck index{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-3">
-            <h2>Vos Decks</h2>
+<div class="row mt-4">
+    <div class="offset-1"></div>
+    <div class="col-2">
+        <div class="new">
             <h3>Nouveau</h3>
             {{ include('deck/_form.html.twig') }}
-
-            {% for deck in decks %}
-                <a href="{{ path('deck_show', {'id': deck.id}) }}">{{ deck.name }}</a>
-                <a href="{{ path('deck_edit', {'id': deck.id}) }}">Modifier</a>
-            {% else %}
-                <p>Aucun deck pour le moment</p>
-            {% endfor %}
         </div>
-        <div class="col-9">
+        <h2>Vos Decks</h2>
 
+        {% for deck in decks %}
+            <div>
+                <a href="{{ path('deck_show', {'id': deck.id}) }}" class="text-dark">{{ deck.name|capitalize }}</a>
+                <a href="{{ path('deck_edit', {'id': deck.id}) }}"><i class="fas fa-pencil-alt text-dark"></i></a>
+            </div>
+        {% else %}
+            <p>Aucun deck pour le moment</p>
+        {% endfor %}
+    </div>
+    <div class="col-7 deckshow">
+        <div class="container">
         </div>
     </div>
+    <div class="offset-2"></div>
+</div>
 
-{% endblock %}
+        {% endblock %}
