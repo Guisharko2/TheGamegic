@@ -1,8 +1,11 @@
 body{
-    background-image: url("/assets/images/backgrounds/magic.jpg");
+    background:linear-gradient(
+            rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.65)
+    ), url("https://cdn-images-1.medium.com/max/2600/1*_HhnCWCrqDSt__s5wFrKqQ.jpeg");
     object-fit: cover;
     background-attachment: fixed;
     background-repeat: no-repeat;
+    background-color: rgba(255,255,255,0.5);
 }
 
 img{
@@ -10,7 +13,9 @@ img{
     object-fit: contain;
     top: 25vh;
 }
-
+h2{
+    font-family: Rubik,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
 .img{
     max-height: 70vh !important;
 }
@@ -75,9 +80,11 @@ div.show-image {
     transition: .5s ease-in-out;
 }
 div.show-image:hover img{
-    opacity:0.6;
+    opacity:0.9;
     -webkit-transform: scale(1.2);
     transform: scale(1.2);
+    filter: none;
+
 }
 div.show-image:hover button {
     display: block;
@@ -105,4 +112,30 @@ div.show-image button.show {
 }
 .mbutton{
     font-size: 16px;
+}
+.grey-card{
+    filter: grayscale(100%);
+    opacity: 0.9;
+}
+.not-grey{
+    filter: none;
+    opacity: 1;
+}
+div.show-image button.buy {
+    top:40%;
+    left:25%;
+}
+.fa-pencil-alt{
+    font-size: 16px;
+}
+.deckshow{
+    background-color: rgba(255, 255, 255, 0.45);
+    height: 800px;
+    border-radius: 15px;
+    max-width: 60vw;
+}
+.new{
+    background-color:rgba(255, 255, 255, 0.45) ;
+    border-radius: 15px;
+    padding-left: -55px;
 }

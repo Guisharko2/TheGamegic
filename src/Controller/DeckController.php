@@ -6,6 +6,7 @@ use App\Entity\Card;
 use App\Entity\Deck;
 use App\Entity\DeckCard;
 use App\Form\DeckType;
+use App\Repository\CardRepository;
 use App\Repository\DeckCardRepository;
 use App\Repository\DeckRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,7 +46,7 @@ class DeckController extends AbstractController
             $entityManager->persist($deck);
             $entityManager->flush();
 
-            return $this->redirectToRoute('deck');
+            return $this->redirectToRgoute('deck');
         }
         if ($_GET) {
             $search = $_GET['search'];
@@ -68,20 +69,21 @@ class DeckController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="deck_show", methods={"GET"})
+     * @Route("/{id}", name="deck_show", methods={"GET","POST"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function show(Deck $deck, int $next = 1): Response
+    public function show(Deck $deck, DeckRepository $deckRepository, CardRepository $cardRepository, Request $request, int $next = 1): Response
     {
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
         ]);
+        $form = $this->createForm(DeckType::class, $deck);
+        $form->handleRequest($request);
         $cards = $deck->getDeckCards();
         if (count($cards) !== 0) {
             foreach ($cards as $card) {
                 $nameCard = $client->request('GET', $this->urc . $card->getIdCard());
                 $statusCode = $nameCard->getStatusCode();
-
                 $body = $nameCard->getBody();
                 $json[] = json_decode($body->getContents(), true);
             }
@@ -102,10 +104,20 @@ class DeckController extends AbstractController
                 return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next,]);
             }
         }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $deck->addUser($this->getUser());
+            $entityManager->persist($deck);
+            $entityManager->flush();
 
+            return $this->redirectToRoute('deck');
+        }
         return $this->render('deck/show.html.twig', [
             'deck' => $deck,
             'cards' => $json,
+            'form' => $form->createView(),
+            'decks' => $deckRepository->findDecksForUser($this->getUser()),
+            'library' => $cardRepository->findCardsByUser($this->getUser()),
         ]);
     }
 
@@ -140,7 +152,7 @@ class DeckController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('deck_index');
+        return $this->redirectToRoute('deck');
     }
 
     /**
