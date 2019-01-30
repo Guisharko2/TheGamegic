@@ -7,7 +7,7 @@
 {% endblock %}
 {% block body %}
 
-    <div class="container mt-5 pl-5">
+    <div class="container mt-5 pl-5 searchshow">
         <p>Il y a <strong>{{ total }}</strong> cartes contenant le votre recherche "{{ search }}"</p>
         {% for card in cardsPages %}
             {% if card.image_uris.png is defined %}
@@ -31,7 +31,7 @@
                                 </a>
                                 <div class="dropdown-menu mbutton" aria-labelledby="dropdownMenuLink">
                                     {% for deck in decks %}
-                                        <a class="dropdown-item dropmenu" href="{{ path('add_to_deck', {'idCard':card.id, 'search':search, 'next':next, 'idDeck':deck.id}) }}">{{ deck.name }}</a>
+                                        <a class="dropdown-item dropmenu deckmenu" href="{{ path('add_to_deck', {'idCard':card.id, 'search':search, 'next':next, 'idDeck':deck.id}) }}">{{ deck.name }}</a>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -42,7 +42,7 @@
                         {% endif %}
                     </a>
                 </div>
-                {% include('_modal_search.html.twig') %}
+                {% include('_modal_search_global.html.twig') %}
             {% endif %}
 
         {% endfor %}
@@ -52,7 +52,7 @@
             {{ knp_pagination_render(cardsPages) }}
         </div>
         {% if total > 175 and cardsPages.getCurrentPageNumber==9 %}
-            <div class="d-flex justify-content-center mt-5 nav-pagination ">
+            <div class="d-flex justify-content-center mt-5 nav-pagination text-dark">
                 <a href="{{ path('searchpage', {'search': search}) ~ '/' ~ (next+1) }}">Plus de résultats</a>
             </div>
         {% endif %}

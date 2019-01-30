@@ -6,10 +6,12 @@
         <div class="offset-1"></div>
         <div class="col-2">
             <div class="new">
-            <h3>Nouveau</h3>
+            <h3 class="text-center">Nouveau</h3>
             {{ include('deck/_form.html.twig') }}
             </div>
-            <h2>Vos Decks</h2>
+            <div class="new mt-5">
+
+            <h2 class="text-center">Vos Decks</h2>
 
             {% for deck in decks %}
                 <div>
@@ -19,11 +21,13 @@
             {% else %}
                 <p>Aucun deck pour le moment</p>
             {% endfor %}
+            </div>
         </div>
         <div class="col-7 deckshow">
             <div class="container">
-                <h2>Deck : {{ deck.name|capitalize }}</h2>
-                {% for card in cards %}
+                <h2 class="text-center">Deck : {{ deck.name|capitalize }}</h2>
+                <h3 class="text-center">{{ cards|length }} cartes</h3>
+                {% for card in cardsPages %}
                     <div class="show-image">
                         <a href="#" data-target="#card{{ card.id }}" data-toggle="modal"
                            class="color-gray-darker td-hover-none">
@@ -42,13 +46,23 @@
                                     </a>
                                 {% endif %}
                             {% endfor %}
+                            <a href="#" data-target="#card{{ card.id }}" data-toggle="modal">
+                                <button class="show mbutton btn btn-bloc btn-danger">Voir
+                                    <i class="fa fa-plus-circle"></i></button>
+                            </a>
                         </a>
                     </div>
+                    {% include('_modal_search_deck.html.twig') %}
+
                 {% endfor %}
+
             </div>
         </div>
         <div class="offset-2"></div>
     </div>
 
+    </div>
+    <div class="d-flex justify-content-center mt-5 nav-pagination text-dark">
+        {{ knp_pagination_render(cardsPages) }}
     </div>
 {% endblock %}

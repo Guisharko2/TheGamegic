@@ -58,20 +58,6 @@
                         {% endif %}
                         </h4>
                     </div>
-                    <div class="dropdown deckdrop mt-3 ml-3 col-6">
-                        <a class="decks mbutton btn btn-secondary dropdown-toggle" href="#" role="button"
-                           id="dropdownMenuLink"
-                           data-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-plus-circle mr-1"></i> Decks
-                        </a>
-                        <div class="dropdown-menu mbutton" aria-labelledby="dropdownMenuLink">
-                            {% for deck in decks %}
-                                <a class="dropdown-item dropmenu deckmenu"
-                                   href="{{ path('add_to_deck_from_library', {'idCard':card.id, 'idDeck':deck.id}) }}">{{ deck.name }}</a>
-                            {% endfor %}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
