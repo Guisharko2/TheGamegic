@@ -35,6 +35,7 @@ class CardController extends AbstractController
         CardRepository $cardRepository,
         PaginatorInterface $paginator,
         Request $request,
+        DeckRepository $deckRepository,
         int $next = 1
     ): Response {
         $client = new Client([
@@ -53,7 +54,7 @@ class CardController extends AbstractController
             $this->addFlash('warning', "Votre bibliothèque est vide");
             return $this->redirectToRoute('homepage');
         }
-        if ($_GET) {
+        if (isset($_GET['search'])) {
             $search = $_GET['search'];
 
             $nameCard = $client->request('GET', $this->uri . $search . $this->url . $this->urlPage . $next);
@@ -66,8 +67,20 @@ class CardController extends AbstractController
                 return $this->redirectToRoute('searchpage', ['search' => $_GET['search'], 'next' => $next,]);
             }
         }
+
+        $cardsPages = $json;
+        $cardsPages = $paginator->paginate(
+            $cardsPages,
+            // Define the page parameter
+            $request->query->getInt('page', 1),
+            // Items per page
+            20
+        );
         return $this->render('card/index.html.twig', [
             'cards' => $json,
+            'cardsPages' => $cardsPages,
+            'decks' => $deckRepository->findDecksForUser($this->getUser()),
+
         ]);
     }
 

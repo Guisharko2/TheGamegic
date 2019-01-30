@@ -6,6 +6,9 @@ body{
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-color: rgba(255,255,255,0.5);
+
+    font-family: 'Almendra SC', serif;
+    font-weight: 600;
 }
 
 img{
@@ -13,9 +16,7 @@ img{
     object-fit: contain;
     top: 25vh;
 }
-h2{
-    font-family: Rubik,"Helvetica Neue",Helvetica,Arial,sans-serif;
-}
+
 .img{
     max-height: 70vh !important;
 }
@@ -31,7 +32,7 @@ h2{
 }
 
 a {
-    font-family: Rubik,"Helvetica Neue",Helvetica,Arial,sans-serif;    font-size: 1.7em;
+    font-size: 1.7em;
     color: #343a40;
     font-weight: 900;
 }
@@ -52,6 +53,10 @@ a:hover{
 .modal-content{
     background-color: transparent;
     border: none;
+    width: 55vw;
+    margin-top: 120px;
+    margin-left: -110px;
+    background-image:url("https://www.transparenttextures.com/patterns/45-degree-fabric-dark.png") ;
 }
 .dropdown-menu{
     background-color: #6c757d;
@@ -105,6 +110,7 @@ div.show-image a.decks {
     display:none;
     margin-top: -80%;
     left:20%;
+    width: 109px;
 }
 div.show-image button.show {
     top:80%;
@@ -130,12 +136,77 @@ div.show-image button.buy {
 }
 .deckshow{
     background-color: rgba(255, 255, 255, 0.45);
-    height: 800px;
+    height:1700px;
     border-radius: 15px;
     max-width: 60vw;
 }
 .new{
     background-color:rgba(255, 255, 255, 0.45) ;
+    border-radius: 10px;
+}
+.searchshow{
+    background-color: rgba(255, 255, 255, 0.45);
+    height:1700px;
     border-radius: 15px;
-    padding-left: -55px;
+    max-width: 56vw;
+}
+
+.deckmenu{
+    font-size: 1em;
+}
+
+.nav-pagination{
+    color: #343a40;
+    font-size: 1.5em;
+}
+.nav-pagination a{
+    color: #343a40;
+    font-size: 1.5em;
+    font-weight: normal;
+}
+.oracle{
+    background-color: white;
+    border-radius: 25px;
+}
+.manaW{
+    background-color: #fffbd5;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-dark.png"),url("/assets/images/backgrounds/white.png");
+    background-repeat: repeat,no-repeat;
+    background-position: 80% 100%;
+}
+.manaC{
+    background-color:#c6bcba;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-dark.png"),url("/assets/images/backgrounds/c.png");
+    background-repeat: repeat,no-repeat;
+    background-position: 80% 100%;
+    }
+.manaR{
+    background-color:#f9aa8f;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-dark.png"),url("/assets/images/backgrounds/red.png");
+    background-repeat: repeat,no-repeat;
+    background-position: 80% 100%;
+    }
+.manaG{
+    background-color:#9bd3ae;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-dark.png"),url("/assets/images/backgrounds/green.png");
+    background-repeat: repeat,no-repeat;
+    background-position: 80% 100%;
+    }
+.manaU{
+    background-color: #aae0fa;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-dark.png"),url("/assets/images/backgrounds/blue.png");
+    background-repeat: repeat,no-repeat;
+    background-position: 80% 100%;
+    }
+.manaB{
+    background-color: #cbc2bf;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-dark.png"),url("/assets/images/backgrounds/black.png");
+    background-repeat: repeat,no-repeat;
+    background-position: 80% 100%;
+}
+.deckdrop{
+    right:-80px;
+}
+.librarymodal{
+    left:-30px;
 }

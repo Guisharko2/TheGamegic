@@ -9,6 +9,7 @@ use App\Form\DeckType;
 use App\Repository\CardRepository;
 use App\Repository\DeckCardRepository;
 use App\Repository\DeckRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,7 +47,7 @@ class DeckController extends AbstractController
             $entityManager->persist($deck);
             $entityManager->flush();
 
-            return $this->redirectToRgoute('deck');
+            return $this->redirectToRoute('deck');
         }
         if ($_GET) {
             $search = $_GET['search'];
@@ -72,7 +73,7 @@ class DeckController extends AbstractController
      * @Route("/{id}", name="deck_show", methods={"GET","POST"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function show(Deck $deck, DeckRepository $deckRepository, CardRepository $cardRepository, Request $request, int $next = 1): Response
+    public function show(Deck $deck, DeckRepository $deckRepository, PaginatorInterface $paginator,CardRepository $cardRepository, Request $request, int $next = 1): Response
     {
         $client = new Client([
             RequestOptions::HTTP_ERRORS => false,
@@ -112,9 +113,19 @@ class DeckController extends AbstractController
 
             return $this->redirectToRoute('deck');
         }
+        dump($json);
+        $cardsPages = $json;
+        $cardsPages = $paginator->paginate(
+            $cardsPages,
+            // Define the page parameter
+            $request->query->getInt('page', 1),
+            // Items per page
+            20
+        );
         return $this->render('deck/show.html.twig', [
             'deck' => $deck,
             'cards' => $json,
+            'cardsPages' => $cardsPages,
             'form' => $form->createView(),
             'decks' => $deckRepository->findDecksForUser($this->getUser()),
             'library' => $cardRepository->findCardsByUser($this->getUser()),
@@ -174,5 +185,24 @@ class DeckController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('searchpage', ['search' => $search, 'next' => $next,]);
+    }
+
+    /**
+     * @Route("/{idCard}/{idDeck}/add", name="add_to_deck_from_library", methods="GET")
+     */
+    public function addToDeckFromLibrary(
+        string $idCard,
+        int $idDeck,
+        DeckRepository $deckRepository
+    ): Response {
+
+        $deckCard = new DeckCard();
+        $deckCard->setIdCard($idCard);
+        $deckCard->addDeck($deckRepository->findOneBy(['id' => $idDeck]));
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($deckCard);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('card_index');
     }
 }

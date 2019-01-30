@@ -2,23 +2,44 @@
 
 {% block title %}Card index{% endblock %}
 {% block body %}
-
-<div class="container mt-5 ">
-    <div class="row">
-    <h1 class="col-12">Ma Bibliothèque</h1>
-    <h2 class="col-12 text-right">{{ cards|length }} cartes</h2>
+    <div class="text-center mt-3">
+    <h1>Ma Bibliothèque</h1>
+    <h2>{{ cards|length }} cartes</h2>
     </div>
-        {% for card in cards %}
-                    {#<a href="{{ path('card_show', {'id': card.id}) }}"><img src="{{ card.image_uris.png }}"/></a>#}
-            <a href="#" data-target="#card{{ card.id }}" data-toggle="modal"
-               class="color-gray-darker td-hover-none">
-                <img class="ml-1 mb-1 mr-1 mt-1 .cardSmall" alt="{{ card.name }}" src="{{ card.image_uris.png }}">
-            </a>
-            {% include('_modal_search.html.twig') %}
+    <div class="container mt-3 pl-5 searchshow">
+        {% for card in cardsPages %}
+            {% if card.image_uris.png is defined %}
+                <div class="show-image mt-2">
+                    <a href="#" data-target="#card{{ card.id }}" data-toggle="modal"
+                       class="color-gray-darker td-hover-none">
+                        <img class="ml-1 mb-1 mr-1 mt-1 .cardSmall" alt="{{ card.name }}"
+                             src="{{ card.image_uris.png }}">
+                            <div class="dropdown mt-3 ml-3">
+                                <a class="decks mbutton btn btn-secondary dropdown-toggle" href="#" role="button"
+                                   id="dropdownMenuLink"
+                                   data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-plus-circle"></i> Decks
+                                </a>
+                                <div class="dropdown-menu mbutton" aria-labelledby="dropdownMenuLink">
+                                    {% for deck in decks %}
+                                        <a class="dropdown-item dropmenu deckmenu" href="{{ path('add_to_deck_from_library', {'idCard':card.id, 'idDeck':deck.id}) }}">{{ deck.name }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <a href="#" data-target="#card{{ card.id }}" data-toggle="modal">
+                                <button class="show mbutton btn btn-bloc btn-danger">Voir
+                                    <i class="fa fa-plus-circle"></i></button>
+                            </a>
+                    </a>
+                </div>
+                {% include('_modal_search.html.twig') %}
+            {% endif %}
 
-        {% else %}
-                <p>Aucune carte à afficher</p>
         {% endfor %}
+    </div>
 
-</div>
+    <div class="d-flex justify-content-center mt-5 nav-pagination text-dark">
+        {{ knp_pagination_render(cardsPages) }}
+    </div>
 {% endblock %}

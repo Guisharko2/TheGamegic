@@ -7,19 +7,23 @@
     <div class="offset-1"></div>
     <div class="col-2">
         <div class="new">
-            <h3>Nouveau</h3>
+            <h3 class="text-center">Nouveau</h3>
             {{ include('deck/_form.html.twig') }}
         </div>
-        <h2>Vos Decks</h2>
+        <div class="new mt-5">
+
+        <h2 class="text-center">Vos Decks</h2>
 
         {% for deck in decks %}
             <div>
                 <a href="{{ path('deck_show', {'id': deck.id}) }}" class="text-dark">{{ deck.name|capitalize }}</a>
                 <a href="{{ path('deck_edit', {'id': deck.id}) }}"><i class="fas fa-pencil-alt text-dark"></i></a>
+                <span>{{ include('deck/_delete_form.html.twig') }}</span>
             </div>
         {% else %}
             <p>Aucun deck pour le moment</p>
         {% endfor %}
+    </div>
     </div>
     <div class="col-7 deckshow">
         <div class="container">
@@ -27,5 +31,4 @@
     </div>
     <div class="offset-2"></div>
 </div>
-
-        {% endblock %}
+{% endblock %}
