@@ -1,0 +1,12 @@
+    <a class="decks mbutton btn btn-secondary dropdown-toggle" href="#" role="button"
+       id="dropdownMenuLink"
+       data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-plus-circle"></i> Decks
+    </a>
+    <div class="dropdown-menu mbutton" aria-labelledby="dropdownMenuLink">
+        {% for deck in decks %}
+            <a class="dropdown-item dropmenu deckmenu"
+               href="{{ path('add_to_deck', {'idCard':card.id, 'idDeck':deck.id, 'path':currentPath}) }}">{{ deck.name }}</a>
+        {% endfor %}
+    </div>

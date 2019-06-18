@@ -5,53 +5,13 @@
     <link href="/assets/css/home.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=MedievalSharp"/>
 {% endblock %}
-    {% block navbar %}
-        <form class="form-inline my-2 my-lg-0 justify-content-right"">
-            <input class="form-control mr-sm-2 text-light navsearch" type="search" placeholder="Rechercher"
-                   aria-label="Search" name="search">
-            <button class="btn btn-dark my-2 my-sm-0 text-light" type="submit">Rechercher</button>
-        </form>
-    {% endblock %}
 {% block body %}
-    <div class="container mt-5 ">
-        <p>Il y a <strong>{{ total }}</strong> cartes contenant le votre recherche "{{ search }}"</p>
-        {% for card in cardsPages %}
-            {% if card.image_uris.png is defined %}
-
-        <a href="#" data-target="#card{{ card.id }}" data-toggle="modal" class="color-gray-darker td-hover-none">
-                <img class="ml-1 mb-1 mr-1 mt-1 .cardSmall" alt="{{ card.name }}" src="{{ card.image_uris.png }}">
-            </a>
-            <div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade" id="card{{ card.id }}" role="dialog"
-                 tabindex="-1">
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-body mb-0 p-0 modalImg">
-                            <img class="img" src="{{ card.image_uris.png }}" alt="{{ card.name }}">
-                        </div>
-                        <div class="modal-footer mb-0 p-0">
-                            <button class="btn btn-outline-primary btn-rounded btn-md ml-4 text-center"
-                                    data-dismiss="modal" type="button">Fermer
-                            </button>
-                            <button class="btn btn-outline-secondary btn-rounded btn-md ml-4 text-center"
-                                    data-dismiss="modal" type="button">Ajouter aux favoris
-                            </button>
-                            <a href="{{ path('add_card', {'idCard':card.id, 'search':search, 'next':next}) }}">
-                                <i class="far fa-plus-square text-info"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-        {% endfor %}
-        <div class="d-flex justify-content-center mt-5 nav-pagination ">
-            {{ knp_pagination_render(cardsPages) }}
-        </div>
-        {% if total > 175 and cardsPages.getCurrentPageNumber==9 %}
-    <div class="d-flex justify-content-center mt-5 nav-pagination ">
-        <a href="{{ path('searchpage', {'search': search}) ~ '/' ~ (next+1)}}">Plus de résultats</a>
+    <div class="container mt-5 pl-5 searchshow">
+        {% include('result/result.html.twig') %}
     </div>
-        {% endif %}
-    </div>
+
+    {#<div class="d-flex justify-content-center mt-5 nav-pagination ">#}
+    {#{{ knp_pagination_render(cardsPages) }}#}
+    {#</div>#}
 {% endblock %}
+

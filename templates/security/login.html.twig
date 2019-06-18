@@ -1,0 +1,44 @@
+{% extends 'security/layout_security.html.twig' %}
+
+{% block stylesheets %}
+    <link href="/assets/css/login.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <body>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+    <div class="wrapper fadeInDown zero-raduis">
+        <div id="formContent">
+
+            <div class="fadeIn first">
+                <h2 class="my-5 text-secondary">Connection</h2>
+            </div>
+
+            <form method="POST">
+                <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
+                       class="form-control fadeIn second zero-raduis" placeholder="Email" required>
+                <input type="password" id="inputPassword" class="fadeIn third zero-raduis form-control" name="password"
+                       placeholder="Mot de passe" required>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div>
+
+                    <button class="btn btn-secondary mt-3 mb-3 connexion fadeIn fourth zero-raduis">{{ button_label|default('Connexion') }}</button>
+                </div>
+                <div>
+                    <p class="text-secondary text-center"><strong>Je n'ai pas encore de compte : </strong></p>
+
+                    <a href="{{ path('app_register') }}">
+                        <button class="btn btn-secondary mt-3 mb-3 connexion fadeIn fourth zero-raduis">Inscription</button>
+                    </a>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+    </body>
+{% endblock %}
+
