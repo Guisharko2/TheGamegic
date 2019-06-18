@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+{% block title %}Deck{% endblock %}
+
+{% block body %}
+    <div class="row mt-4">
+        <div class="offset-1"></div>
+        <div class="col-2">
+            <div class="new">
+            <h3 class="text-center">Nouveau</h3>
+            {{ include('deck/_form.html.twig') }}
+            </div>
+            <div class="new mt-5">
+
+            <h2 class="text-center">Vos Decks</h2>
+
+            {% for deck in decks %}
+                <div>
+                    <a href="{{ path('deck_show', {'id': deck.id}) }}" class="text-dark">{{ deck.name|capitalize }}</a>
+                    <a href="{{ path('deck_edit', {'id': deck.id}) }}"><i class="fas fa-pencil-alt text-dark"></i></a>
+                </div>
+            {% else %}
+                <p>Aucun deck pour le moment</p>
+            {% endfor %}
+            </div>
+        </div>
+        <div class="col-7 deckshow">
+            <div class="container">
+                <h2 class="text-center">Deck : {{ deck.name|capitalize }}</h2>
+                <h3 class="text-center">{{ totalCount }} cartes</h3>
+
+                <div class="container mt-5 pl-5 searchshow">
+                    {% include('result/result.html.twig') %}
+                </div>
+
+            </div>
+        </div>
+        <div class="offset-2"></div>
+    </div>
+
+    </div>
+    <div class="d-flex justify-content-center mt-5 nav-pagination text-dark">
+        {{ knp_pagination_render(cardsPages) }}
+    </div>
+{% endblock %}

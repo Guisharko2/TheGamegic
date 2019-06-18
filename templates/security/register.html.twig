@@ -1,0 +1,52 @@
+{% extends 'security/layout_security.html.twig' %}
+
+{% block stylesheets %}
+    <link href="/assets/css/login.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <body>
+    <div class="wrapper fadeInDown zero-raduis">
+
+        <div id="formContent">
+
+            <div class="fadeIn first">
+                <h2 class="my-5 text-secondary">Inscription</h2>
+            </div>
+
+            {{ form_start(form) }}
+            <div class="fadeIn second zero-raduis">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email) }}
+            </div>
+
+            <div class="fadeIn third zero-raduis mt-2">
+                {{ form_label(form.password.first) }}
+                {{ form_widget(form.password.first) }}
+            </div>
+
+            <div class="fadeIn fourth zero-raduis mt-2">
+                {{ form_label(form.password.second) }}
+                {{ form_widget(form.password.second) }}
+            </div>
+            <div class=" fadeIn fiveth col-12 text-center mt-5">
+                <p>En vous inscrivant, vous acceptez nos conditions générales d'utilisation et notre politique de
+                    confidentialité</p>
+            </div>
+            <div class="row justify-content-center">
+                <button class="btn btn-secondary mt-3 mb-3 connexion fadeIn fourth zero-raduis">{{ button_label|default('Je m\'inscris !') }}</button>
+            </div>
+            {{ form_end(form) }}
+            <div class="fadeIn fiveth row justify-content-center mt-4">
+                <div class="zero-raduis col-12 text-center">
+                    <p>Déjà un compte sur The Gamegic ?</p>
+                </div>
+                <div class="zero-raduis col-11 col-md-12">
+                    <a href="{{ path('app_login') }}"><p class="fa-1x text-secondary text-center"><strong>Je me connecte
+                                !</strong></p></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}

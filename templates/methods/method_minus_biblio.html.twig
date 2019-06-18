@@ -1,0 +1,7 @@
+{% if app.request.getPathInfo == "/card/" %}
+<a href="{{ path('remove_card', {'idCard':card.id, 'path':currentPath}) }}">
+    <button class="library mbutton btn btn-bloc btn-warning ">
+        <i class="fa fa-minus-circle"></i> Bibliothèque
+    </button>
+</a>
+{% endif %}

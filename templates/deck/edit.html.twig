@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Deck{% endblock %}
+
+{% block body %}
+
+
+        <div class="row mt-4">
+            <div class="offset-1"></div>
+            <div class="col-2">
+                <div class="new">
+                    <h3 class="text-center">Modifier</h3>
+                    {{ include('deck/_form.html.twig', {'button_label': 'Modifier'}) }}
+                    {{ include('deck/_delete_form.html.twig') }}
+                </div>
+
+
+            </div>
+            <div class="col-7 deckshow">
+                <div class="container">
+                </div>
+            </div>
+            <div class="offset-2"></div>
+        </div>
+
+{% endblock %}

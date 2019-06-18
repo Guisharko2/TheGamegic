@@ -1,0 +1,39 @@
+{% set currentPath = path(app.request.attributes.get('_route'),
+    app.request.attributes.get('_route_params')) %}
+
+
+    {% for card in cards %}
+
+<div class="show-image mt-2">
+    <a href="#" data-target="#card{{ card.id }}" data-toggle="modal"
+       class="color-gray-darker td-hover-none">
+        {% if countCards is defined %}
+
+            <div class="text-center text-secondary">
+                {{ countCards[loop.index -1]}}
+            </div>
+        {% endif %}
+        <img class="ml-1 mb-1 mr-1 mt-1 .cardSmall" alt="{{ card.name }}"
+             src="
+                        {% if card.Png %}
+                            {{ card.Png }}
+                        {% else %}
+                        /assets/images/backcard.png
+                        {% endif %}
+                ">
+        {% if (app.user.roles is defined) %}
+            <div class="dropdown mt-3 ml-3">
+                {% include ('methods/method_deck.html.twig') %}
+            </div>
+            {% include ('methods/method_minus_deck.html.twig') %}
+
+            <div class="dropdown mb-5">
+                {% include ('methods/method_plus_biblio.html.twig') %}
+            </div>
+            {% include ('methods/method_minus_biblio.html.twig') %}
+
+        {% endif %}
+    </a>
+</div>
+{% include('result/modal_result.html.twig') %}
+{% endfor %}

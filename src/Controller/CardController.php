@@ -3,96 +3,152 @@
 namespace App\Controller;
 
 use App\Entity\Card;
-use App\Repository\CardRepository;
+use App\Entity\User;
+use App\Entity\UserCard;
+use App\Form\BasicSearchType;
+use App\Repository\DeckRepository;
+use App\Repository\GameCardRepository;
+use App\Repository\UserCardRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use GuzzleHttp\RequestOptions;
-use GuzzleHttp\Client;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/card")
  */
 class CardController extends AbstractController
 {
-
-    private $uri = 'https://api.scryfall.com/cards/';
-
     /**
-     * @Route("/", name="card_index", methods={"GET"})
+     * @Route("/", name="card_index", methods={"GET|POST"})
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function index(CardRepository $cardRepository): Response
+    public function index(
+        UserCardRepository $userCardRepository,
+        PaginatorInterface $paginator,
+        Request $request,
+        DeckRepository $deckRepository,
+        GameCardRepository $gameCardRepository
+    ): Response
     {
-        $client = new Client([
-            RequestOptions::HTTP_ERRORS => false,
-        ]);
-        $cards =  $cardRepository->findAll();
-
-        foreach ($cards as $card) {
-            $nameCard = $client->request('GET', $this->uri . $card->getCardId());
-            $statusCode = $nameCard->getStatusCode();
-            if ($statusCode > 300) {
-                return $this->redirectToRoute('homepage');
-            }
-            $body = $nameCard->getBody();
-            $json[] = json_decode($body->getContents(), true);
-        }
-        return $this->render('card/index.html.twig', ['cards' => $json]);
-    }
-
-
-    /**
-     * @Route("/{id}", name="card_show", methods={"GET"})
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function show(string $id): Response
-    {
-        $card= new Card();
-        $card->setCardId($id);
-        $client = new Client([
-            RequestOptions::HTTP_ERRORS => false,
-        ]);
-
-        $nameCard = $client->request('GET', $this->uri . $card->getCardId());
-        $statusCode = $nameCard->getStatusCode();
-        if ($statusCode > 300) {
+        $form = $this->createForm(BasicSearchType::class);
+        $form->handleRequest($request);
+        $totalCards = $userCardRepository->byUser($this->getUser());
+        $countCards = [];
+        if (count($totalCards) === 0) {
+            $this->addFlash('warning', "Votre bibliothèque est vide");
             return $this->redirectToRoute('homepage');
         }
-        $body = $nameCard->getBody();
-        $json = json_decode($body->getContents(), true);
-
-        return $this->render('card/show.html.twig', ['card' =>$json]);
-    }
-
-
-    /**
-     * @Route("/{id}", name="card_delete", methods={"DELETE"})
-     */
-    public function delete(Request $request, Card $card): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$card->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($card);
-            $entityManager->flush();
+        foreach ($totalCards as $card) {
+            $gamecard = $gameCardRepository->findBy(['card_id' => $card->getIdCard()]);
+            $cards[$gamecard[0]->getCardId()] = $gamecard[0];
+            $countCards[] = $card->getCount();
         }
+        if ($_POST) {
+            $search = $_POST['basic_search']['name'];
+            return $this->redirectToRoute('searchpage', ['search' => $search]);
+        }
+        $cardsPages = $cards;
+        $cardsPages = $paginator->paginate(
+            $cardsPages,
+            // Define the page parameter
+            $request->query->getInt('page', 1),
+            // Items per page
+            20
+        );
+        return $this->render('card/index.html.twig', [
+            'cards' => $cards,
+            'cardsPages' => $cardsPages,
+            'countCards' => $countCards,
+            'decks' => $deckRepository->findDecksForUser($this->getUser()),
+            'form' => $form->createView(),
 
-        return $this->redirectToRoute('card_index');
+        ]);
     }
 
-    /**
-     * @Route("/{idCard}/add/{search}/{next}", name="add_card", methods="GET")
-     */
-    public function addCard(string $idCard, string $search, int $next): Response
-    {
-        $card = new Card();
 
-        $card->setCardId($idCard);
+    /**
+     * @Route("/{id}", name="card_show", methods={"GET|POST"})
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function show(Request $request, string $id, GameCardRepository $gameGardRepository): Response
+    {
+        $card = $gameGardRepository->findBy(['id' => $id]);
+        $form = $this->createForm(BasicSearchType::class);
+        $form->handleRequest($request);
+        if ($_POST) {
+            $search = $_POST['basic_search']['name'];
+        }
+        if (!empty(trim($search))) {
+            return $this->redirectToRoute('searchpage', ['search' => $search]);
+        }
+        $manas = '';
+        return $this->render('card/show.html.twig', ['card' => $card, 'manas' => $manas]);
+    }
+
+//    /**
+//     * @Route("/{idCard}/add/{path}", name="add_card", methods="GET", requirements={"path"=".+"})
+//     */
+//    public function addCard(string $idCard,GameCardRepository $gameGardRepository, $path): Response
+//    {
+//        if ($gameGardRepository->findBy(['id' => $idCard])) {
+//            $card = $gameGardRepository->findOneBy(['id' => $idCard]);
+//            $card->addUser($this->getUser());
+//            $entityManager = $this->getDoctrine()->getManager();
+//            $entityManager->persist($card);
+//            $entityManager->flush();
+//        }
+//        return $this->redirect($path);
+//    }
+
+    /**
+     * @Route("/{idCard}/add/{path}", name="add_card", methods="GET", requirements={"path"=".+"})
+     */
+    public function addCard(string $idCard, UserCardRepository $userCardRepository, GameCardRepository $gameCardRepository, $path): Response
+    {
+        $card = $gameCardRepository->findOneBy(['id' => $idCard]);
+
+        $usercard = $userCardRepository->findBy(['idCard' => $card->getCardId()]);
+
+
+        if ((!$userCardRepository->findBy(['idCard' => $card->getCardId()]))
+            || ($usercard[0]->getUser()->getValues()[0] != $this->getUser())
+        ) {
+            $usercard = new UserCard;
+            $usercard->addUser($this->getUser());
+            $usercard->setCount(1);
+            $usercard->setIdCard($card->getCardId());
+        } else {
+
+            $usercard[0]->setCount($usercard[0]->getCount() + 1);
+            $usercard = $usercard[0];
+        }
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($card);
+        $entityManager->persist($usercard);
         $entityManager->flush();
 
-        return $this->redirectToRoute('searchpage', ['search' => $search, 'next' => $next, ]);
+        return $this->redirect($path);
+    }
+
+    /**
+     * @Route("/{idCard}/remove/{path}", name="remove_card", methods="GET", requirements={"path"=".+"})
+     */
+    public function removeCard(string $idCard, UserCardRepository $userCardRepository, GameCardRepository $gameCardRepository, $path): Response
+    {
+        $card = $gameCardRepository->findOneBy(['id' => $idCard]);
+
+        $usercard = $userCardRepository->findBy(['idCard' => $card->getCardId()]);
+
+        $usercard[0]->setCount($usercard[0]->getCount() - 1);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($usercard[0]);
+        $entityManager->flush();
+
+        return $this->redirect($path);
     }
 }

@@ -1,0 +1,105 @@
+<div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade justify-content-center" id="card{{ card.id }}"
+     role="dialog"
+     tabindex="-1">
+    <div class="modal-dialog modal-lg mt-5" role="document">
+        <div class="modal-content oracle
+                {% if card.colors is defined %}
+                    {% if card.colors|first == 'B' %}
+                    manaB
+                    {% elseif card.colors|first == 'W' %}
+                    manaW
+                    {% elseif card.colors|first == 'G' %}
+                    manaG
+                    {% elseif card.colors|first == 'R' %}
+                    manaR
+                    {% elseif card.colors|first == 'U' %}
+                    manaU
+                    {% elseif card.colors|first == 'C' %}
+                    manaC
+                    {% endif %}
+                {% endif %}">
+
+            <div class="row">
+
+                <div class="col-5">
+                    <img class="img" alt="{{ card.name }}"
+                         src="
+                        {% if card.Png %}
+                            {{ card.Png }}
+                        {% else %}
+                        /assets/images/backcard.png
+                        {% endif %}
+                ">
+                    <a href="#" data-target="#card{{ card.id }}" data-toggle="modal"
+                       class="color-gray-darker td-hover-none">
+                    </a>
+                </div>
+                <div class="offset-1"></div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-12 mb-5 mt-5">
+                            <h3>
+                                {% if card.printedName %}
+                                    {{ card.printedName }}
+                                {% else %}
+                                    {{ card.name }}
+                                {% endif %}
+                            </h3>
+                        </div>
+                        <div class="col-12 mb-5">
+                            <h4>
+                                {% if card.printedTypeLine %}
+                                    {{ card.printedTypeLine }}
+                                {% else %}
+                                    {{ card.typeLine }}
+                                {% endif %}
+                            </h4>
+                        </div>
+                        <div class="col-12 mb-5">
+                            <h5>
+                                {% if card.printedText %}
+                                    {{ card.printedText }}
+                                {% else %}
+                                    {{ card.oracleText }}
+                                {% endif %}
+                            </h5>
+                        </div>
+                        {% if card.rarity is defined %}
+                            <div class="col-12 mb-5">
+                                <h4>Rareté :
+                                    <small>{{ card.rarity }}</small>
+                                </h4>
+                            </div>
+                        {% endif %}
+                        <div class="col-12 text-right pr-5">
+                            <h4>
+                                {% if card.power is not null %}
+                                    {{ card.power }} /
+                                    {{ card.toughness }}
+                                {% endif %}
+                            </h4>
+                        </div>
+                        <div class="col-12 text-right pr-5">
+                        {% for price in card.prices %}
+                            {{ price }}
+                        {% endfor %}
+                        </div>
+                        {% if (app.user.roles is defined) %}
+                            <div class="dropdown deckdrop mt-3 col-6">
+                                {% include ('methods/method_deck.html.twig') %}
+                            </div>
+                            {% include ('methods/method_minus_deck.html.twig') %}
+
+                            <div class="col-6 librarymodal mt-3">
+                                    {% include ('methods/method_plus_biblio.html.twig') %}
+                                </div>
+                                {% include ('methods/method_minus_biblio.html.twig') %}
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

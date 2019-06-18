@@ -7,17 +7,15 @@
 {% endblock %}
 
 {% block body %}
-
     <div class="container">
         <div class="row">
             <img class=" col-12 justify-content-center logoMg" src="/assets/images/mtglogo.png">
         </div>
 
-        <div class="row">
-            <form class="form-inline my-2 my-lg-0 col-12 justify-content-center">
-                <input class="form-control mr-sm-2 text-light" type="search" placeholder="Rechercher" aria-label="Search" name="search">
-                <button class="btn btn-dark my-2 my-sm-0 text-light" type="submit">Rechercher</button>
-            </form>
+        <div class="row index-page">
+            <div class="form-inline my-2 my-lg-0 col-12 justify-content-center">
+                {{ include('search/_basic_form.html.twig') }}
+            </div>
         </div>
     </div>
 {% endblock %}
